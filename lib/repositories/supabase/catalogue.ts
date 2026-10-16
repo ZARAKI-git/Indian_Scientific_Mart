@@ -107,9 +107,10 @@ export class SupabaseProductRepository implements ProductRepository {
   }
 
   async countLive(): Promise<number> {
-    const { count, error } = await this.db.from("products").select("id", { count: "estimated", head: true })
-      .eq("is_active", true).eq("needs_review", false);
+    // brands.product_count is kept exact by refresh_brand_counts(); a planner estimate on the
+    // filtered products table was off by a third after a bulk load
+    const { data, error } = await this.db.from("brands").select("product_count").eq("is_active", true);
     if (error) fail("products.countLive", error);
-    return count ?? 0;
+    return (data as Array<{ product_count: number }>).reduce((n, r) => n + r.product_count, 0);
   }
 }
