@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BrandShowcase } from "@/components/catalogue/BrandShowcase";
 import { CatalogueView } from "@/components/catalogue/CatalogueView";
 import { PageHero } from "@/components/ui/PageHero";
 import { parseQuery } from "@/lib/catalogue/params";
@@ -18,13 +19,15 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
 
 export default async function CataloguePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query = parseQuery(await searchParams);
-  const [page, brands, categories, live] = await Promise.all([
+  const [page, brands, categories, live, showcase] = await Promise.all([
     productRepo().search(query), brandRepo().listActive(), categoryRepo().list(), productRepo().countLive(),
+    brandRepo().listShowcase(),
   ]);
   return (
     <>
       <PageHero tag="Catalogue" crumbs={[{ href: "/", label: "Home" }, { label: "Catalogue" }]}
         title={<>Every list, <span className="grad-text">one search.</span></>}
+        aside={<BrandShowcase brands={showcase} />}
         lede="Published list rates from the makers we supply, searchable by name, catalogue code or CAS number. Add what you need to a quote list; the office replies with a price against current stock and quantity.">
         <div className="hero-stats" data-a>
           <div><b>{live.toLocaleString("en-IN")}</b><span>Items listed</span></div>

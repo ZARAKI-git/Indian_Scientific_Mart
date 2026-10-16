@@ -1,9 +1,12 @@
-import type { Brand, PriceBasis, Product, ProductSummary, QuoteRequest } from "@/lib/domain/types";
+import type { Brand, BrandShowcaseItem, PriceBasis, Product, ProductSummary, QuoteRequest } from "@/lib/domain/types";
 
 /* Row shapes as PostgREST returns them. Kept here so only this layer knows column names. */
 export interface BrandRow {
   id: number; name: string; slug: string; country: string | null; product_count: number;
   price_basis: PriceBasis; price_as_of: string | null; note: string | null; is_active: boolean;
+}
+export interface BrandShowcaseRow {
+  id: number; name: string; slug: string; logo_url: string | null; logo_needs_chip: boolean; category: string | null;
 }
 export interface SearchRow {
   id: number; code: string; name: string; pack_size: string | null; cas_no: string | null;
@@ -24,6 +27,10 @@ const num = (v: number | string | null): number | null => (v === null || v === u
 export const toBrand = (r: BrandRow): Brand => ({
   id: r.id, name: r.name, slug: r.slug, country: r.country, productCount: r.product_count,
   priceBasis: r.price_basis, priceAsOf: r.price_as_of, note: r.note, isActive: r.is_active,
+});
+
+export const toBrandShowcase = (r: BrandShowcaseRow): BrandShowcaseItem => ({
+  id: r.id, name: r.name, slug: r.slug, logoUrl: r.logo_url, logoNeedsChip: r.logo_needs_chip, category: r.category,
 });
 
 export const toSummaryFromSearch = (r: SearchRow): ProductSummary => ({

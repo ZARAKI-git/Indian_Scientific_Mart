@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Brand, Category, Page, Product, ProductQuery, ProductSummary } from "@/lib/domain/types";
+import type { Brand, BrandShowcaseItem, Category, Page, Product, ProductQuery, ProductSummary } from "@/lib/domain/types";
 import type { BrandRepository, CategoryRepository, ProductRepository } from "../contracts";
-import { type BrandRow, type ProductRow, type SearchRow, toBrand, toProduct, toSummaryFromSearch } from "./mappers";
+import { type BrandRow, type BrandShowcaseRow, type ProductRow, type SearchRow, toBrand, toBrandShowcase, toProduct, toSummaryFromSearch } from "./mappers";
 
 const BRAND_COLS = "id,name,slug,country,product_count,price_basis,price_as_of,note,is_active";
 const PRODUCT_COLS =
@@ -26,6 +26,13 @@ export class SupabaseBrandRepository implements BrandRepository {
     const { data, error } = await this.db.from("brands").select(BRAND_COLS).eq("slug", slug).maybeSingle();
     if (error) fail("brands.getBySlug", error);
     return data ? toBrand(data as BrandRow) : null;
+  }
+
+  async listShowcase(): Promise<BrandShowcaseItem[]> {
+    const { data, error } = await this.db.from("brand_showcase").select("id,name,slug,logo_url,logo_needs_chip,category")
+      .order("display_order").order("name");
+    if (error) fail("brands.listShowcase", error);
+    return (data as BrandShowcaseRow[]).map(toBrandShowcase);
   }
 }
 

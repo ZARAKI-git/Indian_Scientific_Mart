@@ -14,6 +14,17 @@ export interface Brand {
   isActive: boolean;
 }
 
+/** A brand as the catalogue's spotlight shows it: logo, name and its main category. */
+export interface BrandShowcaseItem {
+  id: number;
+  name: string;
+  slug: string;
+  logoUrl: string | null;
+  /** Logo needs a white chip to read on the sky panel. Set per brand, never guessed. */
+  logoNeedsChip: boolean;
+  category: string | null;
+}
+
 export interface Category {
   id: number;
   name: string;

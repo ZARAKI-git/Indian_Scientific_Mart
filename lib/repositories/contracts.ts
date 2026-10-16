@@ -4,12 +4,14 @@
  * the sole code that knows about the database.
  */
 import type {
-  Brand, Category, Page, Product, ProductQuery, ProductSummary, QuoteRequest, QuoteRequestInput,
+  Brand, BrandShowcaseItem, Category, Page, Product, ProductQuery, ProductSummary, QuoteRequest, QuoteRequestInput,
 } from "@/lib/domain/types";
 
 export interface BrandRepository {
   listActive(): Promise<Brand[]>;
   getBySlug(slug: string): Promise<Brand | null>;
+  /** Listed brands with logos, in display order, for the catalogue spotlight. */
+  listShowcase(): Promise<BrandShowcaseItem[]>;
 }
 
 export interface CategoryRepository {
