@@ -1,0 +1,10 @@
+node_modules
+.next
+.env*.local
+.env
+scripts/ingest/.venv
+scripts/ingest/out
+scripts/ingest/out_run.log
+*.tsbuildinfo
+.vercel
+__pycache__
