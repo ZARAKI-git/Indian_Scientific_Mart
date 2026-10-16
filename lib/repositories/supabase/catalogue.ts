@@ -78,6 +78,14 @@ export class SupabaseProductRepository implements ProductRepository {
     return { items: rows.map(toSummaryFromSearch), total, limit, offset };
   }
 
+  async similar(q: ProductQuery, limit: number): Promise<ProductSummary[]> {
+    const { data, error } = await this.db.rpc("similar_products", {
+      q: q.q?.trim() || null, p_brand: q.brand || null, p_category: q.category || null, p_limit: limit,
+    });
+    if (error) fail("products.similar", error);
+    return ((data ?? []) as SearchRow[]).map(toSummaryFromSearch);
+  }
+
   async getById(id: number): Promise<Product | null> {
     const { data, error } = await this.db.from("products").select(PRODUCT_COLS).eq("id", id).maybeSingle();
     if (error) fail("products.getById", error);

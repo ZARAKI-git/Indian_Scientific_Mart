@@ -22,6 +22,8 @@ export interface CategoryRepository {
 
 export interface ProductRepository {
   search(query: ProductQuery): Promise<Page<ProductSummary>>;
+  /** Closest items when a search has no exact result: any query word matches, then the rest of the category. */
+  similar(query: ProductQuery, limit: number): Promise<ProductSummary[]>;
   getById(id: number): Promise<Product | null>;
   related(product: Product, limit: number): Promise<ProductSummary[]>;
   /** Minimal rows for the sitemap, keyset-paged by id. */

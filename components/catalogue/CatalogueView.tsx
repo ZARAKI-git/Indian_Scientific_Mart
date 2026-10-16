@@ -16,9 +16,11 @@ interface Props {
   categories: Array<Category & { count?: number }>;
   brands?: Brand[];          // omitted on a brand page (brand is fixed)
   fixedBrand?: string;
+  /** Nearest listed items, shown when the query has no exact result. */
+  closest?: ProductSummary[];
 }
 
-export function CatalogueView({ initial, query, categories, brands, fixedBrand }: Props) {
+export function CatalogueView({ initial, query, categories, brands, fixedBrand, closest = [] }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [, startNav] = useTransition();
@@ -87,14 +89,16 @@ export function CatalogueView({ initial, query, categories, brands, fixedBrand }
         </div>
       </div>
       <div className="wrap">
-        <CatalogueList key={listKey} initial={initial} query={query} showBrand={!fixedBrand} />
+        <CatalogueList closest={closest} key={listKey} initial={initial} query={query} showBrand={!fixedBrand} />
       </div>
     </>
   );
 }
 
 /** Windowed list: only the rows near the viewport are in the DOM, however far you scroll. */
-function CatalogueList({ initial, query, showBrand }: { initial: Page<ProductSummary>; query: ProductQuery & { page: number }; showBrand: boolean }) {
+function CatalogueList({ initial, query, showBrand, closest }: {
+  initial: Page<ProductSummary>; query: ProductQuery & { page: number }; showBrand: boolean; closest: ProductSummary[];
+}) {
   const env = useMotionEnv();
   const [items, setItems] = useState(initial.items);
   const [total, setTotal] = useState(initial.total);
@@ -145,6 +149,19 @@ function CatalogueList({ initial, query, showBrand }: { initial: Page<ProductSum
 
   const pages = Math.max(1, Math.ceil(initial.total / PAGE_SIZE));
   const pageHref = (n: number) => { const s = toSearchParams({ ...query, page: n }); return `?${s}`; };
+
+  if (!items.length && closest.length)
+    return (
+      <>
+        <div className="results-meta" aria-live="polite">
+          <span>No exact match{query.q ? <> for “{query.q}”</> : null}. <b>Closest items we list:</b></span>
+          <span>Not what you need? <Link href="/quote" style={{ color: "var(--brand-dk)", fontWeight: 600 }}>Send your list</Link> — the office prices unlisted items too.</span>
+        </div>
+        <ul className="prows closest">
+          {closest.map((p) => <li key={p.id}><ProductRow p={p} showBrand={showBrand} /></li>)}
+        </ul>
+      </>
+    );
 
   if (!items.length)
     return (

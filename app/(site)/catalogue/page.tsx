@@ -23,6 +23,8 @@ export default async function CataloguePage({ searchParams }: { searchParams: Pr
     productRepo().search(query), brandRepo().listActive(), categoryRepo().list(), productRepo().countLive(),
     brandRepo().listShowcase(),
   ]);
+  // no exact result: offer the nearest items we do list instead of a dead end
+  const closest = page.total === 0 && (query.q || query.category) ? await productRepo().similar(query, 12) : [];
   return (
     <>
       <PageHero tag="Catalogue" crumbs={[{ href: "/", label: "Home" }, { label: "Catalogue" }]}
@@ -36,7 +38,7 @@ export default async function CataloguePage({ searchParams }: { searchParams: Pr
         </div>
       </PageHero>
       <section className="section" style={{ paddingTop: 0 }}>
-        <CatalogueView initial={page} query={query} categories={categories} brands={brands} />
+        <CatalogueView initial={page} query={query} categories={categories} brands={brands} closest={closest} />
       </section>
     </>
   );

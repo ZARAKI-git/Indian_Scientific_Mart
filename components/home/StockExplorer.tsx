@@ -9,13 +9,13 @@ import { GuardedImg } from "@/components/ui/GuardedImg";
 import { useSceneEvents } from "./useSceneEvents";
 
 const ITEMS = [
-  { id: "1617155093730-a8bf47be792d", name: "Beaker, 250 ml", note: "Borosilicate · graduated", cat: "Glassware", q: "beaker 250" },
-  { id: "1628864005140-7770b9b8e7dd", name: "Conical flask", note: "Narrow neck · for swirling", cat: "Glassware", q: "conical flask" },
-  { id: "1643625748977-43532f7d023f", name: "Measuring cylinder", note: "Graduated · to the mark", cat: "Volumetric", q: "measuring cylinder" },
-  { id: "1628863353691-0071c8c1874c", name: "Watch glass", note: "Evaporation · covering", cat: "Glassware", q: "watch glass" },
-  { id: "1595500383097-2ac105c5f705", name: "Reagent bottle", note: "Amber · light-sensitive reagents", cat: "Consumables", q: "reagent bottle amber" },
+  { id: "1617155093730-a8bf47be792d", name: "Beaker, 250 ml", note: "Borosilicate · graduated", cat: "Glassware", q: "beaker", slug: "glassware" },
+  { id: "1628864005140-7770b9b8e7dd", name: "Conical flask", note: "Narrow neck · for swirling", cat: "Glassware", q: "conical flask", slug: "glassware" },
+  { id: "1643625748977-43532f7d023f", name: "Measuring cylinder", note: "Graduated · to the mark", cat: "Volumetric", q: "measuring cylinder", slug: "glassware" },
+  { id: "1628863353691-0071c8c1874c", name: "Watch glass", note: "Evaporation · covering", cat: "Glassware", q: "watch glass", slug: "glassware" },
+  { id: "1595500383097-2ac105c5f705", name: "Reagent bottle", note: "Amber · light-sensitive reagents", cat: "Consumables", q: "reagent bottle", slug: "glassware" },
   { id: "1601961545517-59307b1fbac3", name: "Wash bottle", note: "Polypropylene · squeeze-dispense", cat: "Plastic labware", q: "wash bottle" },
-  { id: "1643625818238-2169a1a029dd", name: "Funnel set", note: "Filtration · transfer", cat: "Glassware", q: "funnel" },
+  { id: "1643625818238-2169a1a029dd", name: "Funnel set", note: "Filtration · transfer", cat: "Glassware", q: "funnel", slug: "glassware" },
 ];
 
 /** The reference's Explorer: hover/tap to select, auto-advances every 5s with a progress bar. */
@@ -88,7 +88,7 @@ export function StockExplorer() {
             sizes="(max-width:980px) 92vw, 52vw" alt={p?.name ?? ""} loading="lazy" style={k === 1 && li === null ? { opacity: 0 } : undefined} />;
         })}
         <figcaption className="cap">
-          <span><b id="stageName">{it.name}</b><small id="stageNote">{it.note} · <Link href={`/catalogue?q=${encodeURIComponent(it.q)}`} style={{ color: "var(--brand-dk)", fontWeight: 600 }}>See prices</Link></small></span>
+          <span><b id="stageName">{it.name}</b><small id="stageNote">{it.note} · <Link href={`/catalogue?${new URLSearchParams(it.slug ? { q: it.q, category: it.slug } : { q: it.q })}`} style={{ color: "var(--brand-dk)", fontWeight: 600 }}>See prices</Link></small></span>
           <span className="chiplet" id="stageCat">{it.cat}</span>
         </figcaption>
       </figure>
